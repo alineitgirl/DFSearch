@@ -5,7 +5,11 @@ namespace DFSearch
 {
     public partial class Form1 : Form
     {
-        Graph graph = new();
+        Graph graph = new Graph();
+        DFS _dfs;
+        GraphConnectivity _connectivity;
+        CycleDetection _cycleDetection;
+        ConnectedComponents _connectedComponents;
         public Form1()
         {
             InitializeComponent();
@@ -41,10 +45,11 @@ namespace DFSearch
         {
             if (!string.IsNullOrEmpty(textBox4.Text) && !string.IsNullOrEmpty(textBox5.Text))
             {
-                if (graph.Edges.Exists(e => e.From.Id == int.Parse(textBox4.Text) && e.To.Id == int.Parse(textBox5.Text)) ||
-                    graph.Edges.Exists(e => e.To.Id == int.Parse(textBox4.Text) && e.From.Id == int.Parse(textBox5.Text)))
+                if (graph.Edges.Exists(e => e.From.Id == int.Parse(textBox5.Text) && e.To.Id == int.Parse(textBox4.Text)) ||
+                    graph.Edges.Exists(e => e.To.Id == int.Parse(textBox5.Text) && e.From.Id == int.Parse(textBox4.Text)))
                 {
                     graph.RemoveEdge(int.Parse(textBox4.Text), int.Parse(textBox5.Text));
+                    graph.RemoveEdge(int.Parse(textBox5.Text), int.Parse(textBox4.Text));
                     RedrawGraph(pictureBox1);
                 }
                 else
@@ -127,9 +132,204 @@ namespace DFSearch
             return new Point(x, y);
         }
 
-        private void сохранитьКакToolStripMenuItem_Click(object sender, EventArgs e)
+        private void button4_Click(object sender, EventArgs e)
         {
+            if (comboBox1.Text == "")
+            {
+                MessageBox.Show("Не выбран алгоритм для графа!", "Ошибка");
+            }
+            else
+            {
+                pictureBox2.Image = null;
+                label3.Text = "Сложность алгоритма по времени: ";
+                label5.Text = "Порядок обхода вершин: ";
+                foreach (var vertex in graph.Vertices)
+                    vertex.IsVisited = false;
+                switch (comboBox1.Text)
+                {
+                    case "Поиск в глубину":
+                        _dfs = new DFS(graph);
+                        _dfs._dfsOrder.Clear();
+                        _dfs.Execute(graph.Vertices[(int)numericUpDown1.Value - 1]);
+                        label3.Text += _dfs.GetTimeComplexity(graph.Vertices[(int)numericUpDown1.Value - 1]) + "мс";
+                        _dfs.Execute();
+                        graph.RedrawGraph(pictureBox2);
+                        label5.Text += $"{_dfs.GetTraversalOrder()}";
+                        break;
+                    case "Определение связности графа":
+                        _connectivity = new GraphConnectivity(graph);
+                        _connectivity.Execute(graph.Vertices[(int)numericUpDown1.Value - 1]);
+                        graph.RedrawGraph(pictureBox2);
+                        label3.Text += _connectivity.GetTimeComplexity(graph.Vertices[(int)numericUpDown1.Value - 1]) + "мс";
+                        label5.Text = _connectivity.IsConnected ? "Данный граф связный." : "Данный граф НЕсвязный.";
+                        break;
+                    case "Поиск циклов":
+                        _cycleDetection = new CycleDetection(graph);
+                        _cycleDetection.Execute(graph.Vertices[(int)numericUpDown1.Value - 1]);
+                        label3.Text += _cycleDetection.GetTimeComplexity(graph.Vertices[(int)numericUpDown1.Value - 1]) + "мс";
+                        _cycleDetection.Execute();
+                        _cycleDetection.RedrawGraph(pictureBox2);
+                        label5.Text = _cycleDetection._hasCycle ? $"Данный граф содержит цикл: {_cycleDetection.GetCyclePath()}." : "Данный граф НЕ содержит циклов.";
+                        break;
+                    case "Компоненты связности":
+                        _connectedComponents = new ConnectedComponents(graph);
+                        _connectedComponents.Execute(graph.Vertices[(int)numericUpDown1.Value - 1]);
+                        label3.Text += _connectedComponents.GetTimeComplexity(graph.Vertices[(int)numericUpDown1.Value - 1]) + "мс";
+                        _connectedComponents.Execute();
+                        _connectedComponents.RedrawGraph(pictureBox2);
+                        label5.Text += _connectedComponents.GetComponentsAsString();
+                        break;
+                }
+            }
+        }
 
+        private void очиститьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            pictureBox1.Image = null;
+            pictureBox2.Image = null;
+            comboBox1.Text = "";
+            textBox1.Clear();
+            textBox2.Clear();
+            textBox3.Clear();
+            textBox4.Clear();
+            textBox5.Clear();
+            numericUpDown1.Value = 1;
+            label3.Text = "Сложность алгоритма по времени: ";
+            label5.Text = "Порядок обхода вершин: ";
+            graph = new Graph();
+        }
+
+        private void выходToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void выходToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void файлToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var fileManager = new FileManager();
+
+
+            using (var saveFileDialog = new SaveFileDialog())
+            {
+                saveFileDialog.Filter = "Text Files (*.txt)|*.txt|PDF Files (*.pdf)|*.pdf|Word Documents (*.docx)|*.docx";
+                saveFileDialog.DefaultExt = "txt";
+
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                {
+
+                    string fileName = saveFileDialog.FileName;
+
+                    string selectedFormat = Path.GetExtension(fileName)?.TrimStart('.').ToLower();
+
+                    if (selectedFormat != "txt" && selectedFormat != "pdf" && selectedFormat != "docx")
+                    {
+                        MessageBox.Show("Выбран неподдерживаемый формат файла!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+
+
+                    List<string> algorithmResults = new List<string>
+            {
+                        $"Название алгоритма: {comboBox1.Text}",
+                        label3.Text,
+                        label5.Text
+            };
+
+                    string dateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+                    try
+                    {
+                        fileManager.SaveToFile(fileName, selectedFormat, algorithmResults, dateTime);
+                        MessageBox.Show($"Файл успешно сохранен: {fileName}", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Ошибка при сохранении файла: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+        }
+
+        private void изображениеToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                using (SaveFileDialog dialog = new SaveFileDialog())
+                {
+                    dialog.Filter = "JPEG Image|*.jpg|Bitmap Image|*.bmp|PNG Image|*.png";
+                    dialog.Title = "Save Graph as Image";
+                    dialog.DefaultExt = "png";
+
+                    if (dialog.ShowDialog() == DialogResult.OK)
+                    {
+
+                        string format = Path.GetExtension(dialog.FileName).TrimStart('.').ToLower();
+
+                        Bitmap graphImage = new Bitmap(pictureBox2.Width, pictureBox2.Height);
+                        using (Graphics g = Graphics.FromImage(graphImage))
+                        {
+                            pictureBox2.DrawToBitmap(graphImage, new Rectangle(0, 0, graphImage.Width, graphImage.Height));
+                        }
+
+
+                        FileManager fileManager = new FileManager();
+                        fileManager.SaveGraphAsImage(dialog.FileName, format, graphImage);
+                        MessageBox.Show($"Граф успешно сохранен: {dialog.FileName}", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при сохранении графа: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void открытьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                using (OpenFileDialog dialog = new OpenFileDialog())
+                {
+                    dialog.Filter = "Text Files|*.txt";
+                    dialog.Title = "Load Graph from File";
+
+                    if (dialog.ShowDialog() == DialogResult.OK)
+                    {
+                        string filePath = dialog.FileName;
+
+
+                        graph = new Graph();
+                        FileManager fileManager = new FileManager();
+                        fileManager.LoadGraphFromFile(filePath, graph);
+
+
+                        graph.RedrawGraph(pictureBox1);
+
+                        MessageBox.Show("Граф успешно загружен!", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void просмотрСправкиToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var formHelp = new FormHelp();
+            formHelp.ShowDialog();
+        }
+
+        private void техническаяПоддержкаToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var formSupport = new FormSupport();
+            formSupport.ShowDialog();
         }
     }
 }

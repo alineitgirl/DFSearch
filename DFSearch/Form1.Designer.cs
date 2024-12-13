@@ -32,20 +32,16 @@
             menuStrip1 = new MenuStrip();
             toolStripMenuItem1 = new ToolStripMenuItem();
             сохранитьКакToolStripMenuItem = new ToolStripMenuItem();
+            файлToolStripMenuItem = new ToolStripMenuItem();
+            изображениеToolStripMenuItem = new ToolStripMenuItem();
             открытьToolStripMenuItem = new ToolStripMenuItem();
             выходToolStripMenuItem1 = new ToolStripMenuItem();
             правкаToolStripMenuItem = new ToolStripMenuItem();
             вырезатьToolStripMenuItem = new ToolStripMenuItem();
             копироватьToolStripMenuItem = new ToolStripMenuItem();
-            перейтиКToolStripMenuItem = new ToolStripMenuItem();
-            поискВГлубинуToolStripMenuItem = new ToolStripMenuItem();
-            определениеСвязностиГрафаToolStripMenuItem = new ToolStripMenuItem();
-            компонентыСвязностиToolStripMenuItem = new ToolStripMenuItem();
-            поискЦикловToolStripMenuItem = new ToolStripMenuItem();
+            очиститьToolStripMenuItem = new ToolStripMenuItem();
             справкаToolStripMenuItem = new ToolStripMenuItem();
             просмотрСправкиToolStripMenuItem = new ToolStripMenuItem();
-            советыИРекомедацииToolStripMenuItem = new ToolStripMenuItem();
-            чтоНовогоToolStripMenuItem = new ToolStripMenuItem();
             техническаяПоддержкаToolStripMenuItem = new ToolStripMenuItem();
             выходToolStripMenuItem = new ToolStripMenuItem();
             panel1 = new Panel();
@@ -69,6 +65,8 @@
             numericUpDown1 = new NumericUpDown();
             panel3 = new Panel();
             label3 = new Label();
+            panel4 = new Panel();
+            label5 = new Label();
             menuStrip1.SuspendLayout();
             panel1.SuspendLayout();
             panel2.SuspendLayout();
@@ -80,6 +78,7 @@
             ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
             panel3.SuspendLayout();
+            panel4.SuspendLayout();
             SuspendLayout();
             // 
             // menuStrip1
@@ -102,26 +101,42 @@
             // 
             // сохранитьКакToolStripMenuItem
             // 
+            сохранитьКакToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { файлToolStripMenuItem, изображениеToolStripMenuItem });
             сохранитьКакToolStripMenuItem.Name = "сохранитьКакToolStripMenuItem";
-            сохранитьКакToolStripMenuItem.Size = new Size(224, 26);
+            сохранитьКакToolStripMenuItem.Size = new Size(192, 26);
             сохранитьКакToolStripMenuItem.Text = "Сохранить как";
-            сохранитьКакToolStripMenuItem.Click += сохранитьКакToolStripMenuItem_Click;
+            // 
+            // файлToolStripMenuItem
+            // 
+            файлToolStripMenuItem.Name = "файлToolStripMenuItem";
+            файлToolStripMenuItem.Size = new Size(190, 26);
+            файлToolStripMenuItem.Text = "Файл";
+            файлToolStripMenuItem.Click += файлToolStripMenuItem_Click;
+            // 
+            // изображениеToolStripMenuItem
+            // 
+            изображениеToolStripMenuItem.Name = "изображениеToolStripMenuItem";
+            изображениеToolStripMenuItem.Size = new Size(190, 26);
+            изображениеToolStripMenuItem.Text = "Изображение";
+            изображениеToolStripMenuItem.Click += изображениеToolStripMenuItem_Click;
             // 
             // открытьToolStripMenuItem
             // 
             открытьToolStripMenuItem.Name = "открытьToolStripMenuItem";
-            открытьToolStripMenuItem.Size = new Size(224, 26);
+            открытьToolStripMenuItem.Size = new Size(192, 26);
             открытьToolStripMenuItem.Text = "Открыть";
+            открытьToolStripMenuItem.Click += открытьToolStripMenuItem_Click;
             // 
             // выходToolStripMenuItem1
             // 
             выходToolStripMenuItem1.Name = "выходToolStripMenuItem1";
-            выходToolStripMenuItem1.Size = new Size(224, 26);
+            выходToolStripMenuItem1.Size = new Size(192, 26);
             выходToolStripMenuItem1.Text = "Выход";
+            выходToolStripMenuItem1.Click += выходToolStripMenuItem1_Click;
             // 
             // правкаToolStripMenuItem
             // 
-            правкаToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { вырезатьToolStripMenuItem, копироватьToolStripMenuItem, перейтиКToolStripMenuItem });
+            правкаToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { вырезатьToolStripMenuItem, копироватьToolStripMenuItem, очиститьToolStripMenuItem });
             правкаToolStripMenuItem.Image = (Image)resources.GetObject("правкаToolStripMenuItem.Image");
             правкаToolStripMenuItem.Name = "правкаToolStripMenuItem";
             правкаToolStripMenuItem.Size = new Size(94, 24);
@@ -139,40 +154,16 @@
             копироватьToolStripMenuItem.Size = new Size(176, 26);
             копироватьToolStripMenuItem.Text = "Копировать";
             // 
-            // перейтиКToolStripMenuItem
+            // очиститьToolStripMenuItem
             // 
-            перейтиКToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { поискВГлубинуToolStripMenuItem, определениеСвязностиГрафаToolStripMenuItem, компонентыСвязностиToolStripMenuItem, поискЦикловToolStripMenuItem });
-            перейтиКToolStripMenuItem.Name = "перейтиКToolStripMenuItem";
-            перейтиКToolStripMenuItem.Size = new Size(176, 26);
-            перейтиКToolStripMenuItem.Text = "Перейти к";
-            // 
-            // поискВГлубинуToolStripMenuItem
-            // 
-            поискВГлубинуToolStripMenuItem.Name = "поискВГлубинуToolStripMenuItem";
-            поискВГлубинуToolStripMenuItem.Size = new Size(306, 26);
-            поискВГлубинуToolStripMenuItem.Text = "Поиск в глубину";
-            // 
-            // определениеСвязностиГрафаToolStripMenuItem
-            // 
-            определениеСвязностиГрафаToolStripMenuItem.Name = "определениеСвязностиГрафаToolStripMenuItem";
-            определениеСвязностиГрафаToolStripMenuItem.Size = new Size(306, 26);
-            определениеСвязностиГрафаToolStripMenuItem.Text = "Определение связности графа";
-            // 
-            // компонентыСвязностиToolStripMenuItem
-            // 
-            компонентыСвязностиToolStripMenuItem.Name = "компонентыСвязностиToolStripMenuItem";
-            компонентыСвязностиToolStripMenuItem.Size = new Size(306, 26);
-            компонентыСвязностиToolStripMenuItem.Text = "Компоненты связности";
-            // 
-            // поискЦикловToolStripMenuItem
-            // 
-            поискЦикловToolStripMenuItem.Name = "поискЦикловToolStripMenuItem";
-            поискЦикловToolStripMenuItem.Size = new Size(306, 26);
-            поискЦикловToolStripMenuItem.Text = "Поиск циклов";
+            очиститьToolStripMenuItem.Name = "очиститьToolStripMenuItem";
+            очиститьToolStripMenuItem.Size = new Size(176, 26);
+            очиститьToolStripMenuItem.Text = "Очистить";
+            очиститьToolStripMenuItem.Click += очиститьToolStripMenuItem_Click;
             // 
             // справкаToolStripMenuItem
             // 
-            справкаToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { просмотрСправкиToolStripMenuItem, советыИРекомедацииToolStripMenuItem, чтоНовогоToolStripMenuItem, техническаяПоддержкаToolStripMenuItem });
+            справкаToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { просмотрСправкиToolStripMenuItem, техническаяПоддержкаToolStripMenuItem });
             справкаToolStripMenuItem.Image = (Image)resources.GetObject("справкаToolStripMenuItem.Image");
             справкаToolStripMenuItem.Name = "справкаToolStripMenuItem";
             справкаToolStripMenuItem.Size = new Size(101, 24);
@@ -181,26 +172,16 @@
             // просмотрСправкиToolStripMenuItem
             // 
             просмотрСправкиToolStripMenuItem.Name = "просмотрСправкиToolStripMenuItem";
-            просмотрСправкиToolStripMenuItem.Size = new Size(264, 26);
+            просмотрСправкиToolStripMenuItem.Size = new Size(260, 26);
             просмотрСправкиToolStripMenuItem.Text = "Просмотр справки";
-            // 
-            // советыИРекомедацииToolStripMenuItem
-            // 
-            советыИРекомедацииToolStripMenuItem.Name = "советыИРекомедацииToolStripMenuItem";
-            советыИРекомедацииToolStripMenuItem.Size = new Size(264, 26);
-            советыИРекомедацииToolStripMenuItem.Text = "Советы и рекомендации";
-            // 
-            // чтоНовогоToolStripMenuItem
-            // 
-            чтоНовогоToolStripMenuItem.Name = "чтоНовогоToolStripMenuItem";
-            чтоНовогоToolStripMenuItem.Size = new Size(264, 26);
-            чтоНовогоToolStripMenuItem.Text = "Что нового?";
+            просмотрСправкиToolStripMenuItem.Click += просмотрСправкиToolStripMenuItem_Click;
             // 
             // техническаяПоддержкаToolStripMenuItem
             // 
             техническаяПоддержкаToolStripMenuItem.Name = "техническаяПоддержкаToolStripMenuItem";
-            техническаяПоддержкаToolStripMenuItem.Size = new Size(264, 26);
+            техническаяПоддержкаToolStripMenuItem.Size = new Size(260, 26);
             техническаяПоддержкаToolStripMenuItem.Text = "Техническая поддержка";
+            техническаяПоддержкаToolStripMenuItem.Click += техническаяПоддержкаToolStripMenuItem_Click;
             // 
             // выходToolStripMenuItem
             // 
@@ -208,6 +189,7 @@
             выходToolStripMenuItem.Name = "выходToolStripMenuItem";
             выходToolStripMenuItem.Size = new Size(87, 24);
             выходToolStripMenuItem.Text = "Выход";
+            выходToolStripMenuItem.Click += выходToolStripMenuItem_Click;
             // 
             // panel1
             // 
@@ -278,7 +260,7 @@
             comboBox1.Items.AddRange(new object[] { "Поиск в глубину", "Определение связности графа", "Компоненты связности", "Поиск циклов" });
             comboBox1.Location = new Point(23, 43);
             comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(227, 28);
+            comboBox1.Size = new Size(290, 28);
             comboBox1.TabIndex = 10;
             // 
             // button4
@@ -290,19 +272,20 @@
             button4.FlatAppearance.MouseOverBackColor = Color.WhiteSmoke;
             button4.FlatStyle = FlatStyle.Flat;
             button4.ForeColor = SystemColors.ActiveCaptionText;
-            button4.Location = new Point(23, 77);
+            button4.Location = new Point(83, 77);
             button4.Margin = new Padding(0, 3, 3, 3);
             button4.Name = "button4";
             button4.Size = new Size(132, 40);
             button4.TabIndex = 9;
             button4.Text = "Применить";
             button4.UseVisualStyleBackColor = false;
+            button4.Click += button4_Click;
             // 
             // label1
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label1.Location = new Point(13, 12);
+            label1.Location = new Point(83, 12);
             label1.Name = "label1";
             label1.Size = new Size(197, 28);
             label1.TabIndex = 7;
@@ -440,31 +423,53 @@
             numericUpDown1.Size = new Size(48, 27);
             numericUpDown1.TabIndex = 4;
             numericUpDown1.TextAlign = HorizontalAlignment.Center;
+            numericUpDown1.Value = new decimal(new int[] { 1, 0, 0, 0 });
             // 
             // panel3
             // 
             panel3.Controls.Add(label3);
             panel3.Location = new Point(12, 606);
             panel3.Name = "panel3";
-            panel3.Size = new Size(402, 36);
+            panel3.Size = new Size(637, 101);
             panel3.TabIndex = 5;
             // 
             // label3
             // 
-            label3.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            label3.Anchor = AnchorStyles.None;
             label3.AutoSize = true;
-            label3.Location = new Point(3, 3);
+            label3.Font = new Font("Segoe UI", 12F, FontStyle.Italic | FontStyle.Underline, GraphicsUnit.Point, 204);
+            label3.Location = new Point(13, 3);
             label3.Name = "label3";
-            label3.Size = new Size(254, 20);
+            label3.Size = new Size(345, 28);
             label3.TabIndex = 6;
             label3.Text = "Сложность алгоритма по времени:";
+            // 
+            // panel4
+            // 
+            panel4.Controls.Add(label5);
+            panel4.Location = new Point(682, 606);
+            panel4.Name = "panel4";
+            panel4.Size = new Size(513, 101);
+            panel4.TabIndex = 7;
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Font = new Font("Segoe UI", 10.8F, FontStyle.Bold, GraphicsUnit.Point, 204);
+            label5.ForeColor = SystemColors.ActiveCaptionText;
+            label5.Location = new Point(20, 6);
+            label5.Name = "label5";
+            label5.Size = new Size(238, 25);
+            label5.TabIndex = 7;
+            label5.Text = "Порядок обхода вершин:\r\n";
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.ActiveCaption;
-            ClientSize = new Size(1335, 648);
+            ClientSize = new Size(1335, 762);
+            Controls.Add(panel4);
             Controls.Add(panel3);
             Controls.Add(numericUpDown1);
             Controls.Add(label2);
@@ -491,6 +496,8 @@
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();
             panel3.ResumeLayout(false);
             panel3.PerformLayout();
+            panel4.ResumeLayout(false);
+            panel4.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -508,14 +515,7 @@
         private ToolStripMenuItem вырезатьToolStripMenuItem;
         private ToolStripMenuItem копироватьToolStripMenuItem;
         private ToolStripMenuItem просмотрСправкиToolStripMenuItem;
-        private ToolStripMenuItem советыИРекомедацииToolStripMenuItem;
-        private ToolStripMenuItem чтоНовогоToolStripMenuItem;
         private ToolStripMenuItem техническаяПоддержкаToolStripMenuItem;
-        private ToolStripMenuItem перейтиКToolStripMenuItem;
-        private ToolStripMenuItem поискВГлубинуToolStripMenuItem;
-        private ToolStripMenuItem определениеСвязностиГрафаToolStripMenuItem;
-        private ToolStripMenuItem компонентыСвязностиToolStripMenuItem;
-        private ToolStripMenuItem поискЦикловToolStripMenuItem;
         private Panel panel1;
         private Button button1;
         private TextBox textBox1;
@@ -537,5 +537,10 @@
         private NumericUpDown numericUpDown1;
         private Panel panel3;
         private Label label3;
+        private Panel panel4;
+        private Label label5;
+        private ToolStripMenuItem очиститьToolStripMenuItem;
+        private ToolStripMenuItem файлToolStripMenuItem;
+        private ToolStripMenuItem изображениеToolStripMenuItem;
     }
 }

@@ -10,11 +10,12 @@ namespace DFSearch.Domains
 {
     public class DFS : GraphAlgorithm
     {
+        public List<Vertex> _dfsOrder = new();
         public DFS(Graph graph) : base(graph, "Depth First Search") { }
 
         public override void Execute()
         {
-            Graph.ResetVisitStatus();
+            //Graph.ResetVisitStatus();
             foreach(var vertex in Graph.Vertices)
             {
                 if (!vertex.IsVisited)
@@ -23,15 +24,31 @@ namespace DFSearch.Domains
                 }
             }
         }
-        
+        public void Execute(Vertex startVertex)
+        {
+            if (startVertex == null)
+            {
+                throw new ArgumentNullException(nameof(startVertex), "Start vertex cannot be null.");
+            }
+
+            Graph.ResetVisitStatus();
+            _dfsOrder.Clear();
+
+            Visit(startVertex);
+        }
         private void Visit(Vertex vertex)
         {
-            vertex.IsVisited = true;
-            foreach(var edge in Graph.Edges)
+            if (vertex.IsVisited) 
+                return;
+
+            vertex.IsVisited = true;       
+            _dfsOrder.Add(vertex);         
+
+            foreach (var edge in Graph.Edges)
             {
                 if (edge.From == vertex && !edge.To.IsVisited)
                 {
-                    Visit(edge.To);
+                    Visit(edge.To);       
                 }
             }
         }
@@ -43,6 +60,26 @@ namespace DFSearch.Domains
             Execute();
             stopwatch.Stop();
             return stopwatch.ElapsedMilliseconds.ToString();
+        }
+        public string GetTimeComplexity(Vertex startVertex)
+        {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            for (int i = 0; i < 100; i++) 
+            {
+                Execute(startVertex);
+            }
+
+            stopwatch.Stop();
+            double elapsedMilliseconds = stopwatch.Elapsed.TotalMilliseconds ;
+            return elapsedMilliseconds.ToString("F6");
+
+        }
+
+        public string GetTraversalOrder()
+        {
+            return string.Join("->", _dfsOrder.Select(vertex => vertex.Id.ToString()));
         }
     }
 }

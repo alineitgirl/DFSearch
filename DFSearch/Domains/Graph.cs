@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace DFSearch.Domains
 {
@@ -24,6 +25,7 @@ namespace DFSearch.Domains
 
             if (from == null || to == null) throw new Exception("Должны быть 2 вершины для существования!");
             Edges.Add(new Edge(from, to));
+            Edges.Add(new Edge(to, from));
         }
 
         public void RemoveVertex(int id)
@@ -47,5 +49,54 @@ namespace DFSearch.Domains
                 v.IsVisited = false;
             }
         }
+
+        public void RedrawGraph(PictureBox pictureBox)
+        {
+            Bitmap bitmap = new Bitmap(pictureBox.Width, pictureBox.Height);
+            Graphics g = Graphics.FromImage(bitmap);
+
+            g.Clear(Color.White);
+
+            Pen edgePen = new Pen(Color.Gray, 2);
+            Brush visitedBrush = new SolidBrush(Color.LightBlue);
+            Brush unvisitedBrush = new SolidBrush(Color.LightGray);
+
+            // Центр PictureBox
+            int centerX = pictureBox.Width / 2;
+            int centerY = pictureBox.Height / 2;
+            int radius = 150;
+
+            // Позиции вершин
+            var vertexPositions = new Dictionary<Vertex, Point>();
+            for (int i = 0; i < Vertices.Count; i++)
+            {
+                double angle = 2 * Math.PI * i / Vertices.Count;
+                int x = centerX + (int)(radius * Math.Cos(angle));
+                int y = centerY + (int)(radius * Math.Sin(angle));
+                vertexPositions[Vertices[i]] = new Point(x, y);
+            }
+
+            // Рисуем рёбра
+            foreach (var edge in Edges)
+            {
+                Point from = vertexPositions[edge.From];
+                Point to = vertexPositions[edge.To];
+                g.DrawLine(edgePen, from, to);
+            }
+
+            // Рисуем вершины
+            foreach (var vertex in Vertices)
+            {
+                Point position = vertexPositions[vertex];
+                Brush brush = vertex.IsVisited ? visitedBrush : unvisitedBrush;
+
+                g.FillEllipse(brush, position.X - 15, position.Y - 15, 30, 30);
+                g.DrawEllipse(Pens.Black, position.X - 15, position.Y - 15, 30, 30);
+                g.DrawString(vertex.Id.ToString(), Form1.DefaultFont, Brushes.Black, position.X - 5, position.Y - 5);
+            }
+
+            pictureBox.Image = bitmap;
+        }
+
     }
 }
