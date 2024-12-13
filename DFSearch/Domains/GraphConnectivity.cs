@@ -35,6 +35,35 @@ namespace DFSearch.Domains
             DFS(Graph.Vertices[0]); 
             IsConnected = visitedCount == Graph.Vertices.Count;
         }
+        public void Execute(Vertex startVertex)
+        {
+            Graph.ResetVisitStatus();
+            var visitedCount = 0;
+
+            if (startVertex == null)
+            {
+                startVertex = Graph.Vertices[0];
+            }
+
+            void DFS(Vertex vertex)
+            {
+                vertex.IsVisited = true;
+                visitedCount++;
+
+                foreach (var edge in Graph.Edges)
+                {
+                    if (edge.From == vertex && !edge.To.IsVisited)
+                    {
+                        DFS(edge.To);
+                    }
+                }
+            }
+
+            DFS(startVertex);
+
+            IsConnected = visitedCount == Graph.Vertices.Count;
+        }
+
 
         public override string GetTimeComplexity()
         {
@@ -44,6 +73,22 @@ namespace DFSearch.Domains
             Execute();
             stopwatch.Stop();
             return stopwatch.ElapsedMilliseconds.ToString();
+        }
+
+        public string GetTimeComplexity(Vertex startVertex)
+        {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            for (int i = 0; i < 100; i++)
+            {
+                Execute(startVertex);
+            }
+
+            stopwatch.Stop();
+            double elapsedMilliseconds = stopwatch.Elapsed.TotalMilliseconds / 100;
+            return elapsedMilliseconds.ToString("F6");
+
         }
     }
 }
