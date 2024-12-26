@@ -37,14 +37,14 @@
             открытьToolStripMenuItem = new ToolStripMenuItem();
             выходToolStripMenuItem1 = new ToolStripMenuItem();
             правкаToolStripMenuItem = new ToolStripMenuItem();
-            вырезатьToolStripMenuItem = new ToolStripMenuItem();
-            копироватьToolStripMenuItem = new ToolStripMenuItem();
             очиститьToolStripMenuItem = new ToolStripMenuItem();
+            историяСессийToolStripMenuItem = new ToolStripMenuItem();
             справкаToolStripMenuItem = new ToolStripMenuItem();
             просмотрСправкиToolStripMenuItem = new ToolStripMenuItem();
             техническаяПоддержкаToolStripMenuItem = new ToolStripMenuItem();
             выходToolStripMenuItem = new ToolStripMenuItem();
             panel1 = new Panel();
+            dataGridView1 = new DataGridView();
             textBox4 = new TextBox();
             button5 = new Button();
             textBox5 = new TextBox();
@@ -52,7 +52,6 @@
             comboBox1 = new ComboBox();
             button4 = new Button();
             label1 = new Label();
-            button3 = new Button();
             textBox3 = new TextBox();
             button2 = new Button();
             textBox2 = new TextBox();
@@ -64,11 +63,13 @@
             label2 = new Label();
             numericUpDown1 = new NumericUpDown();
             panel3 = new Panel();
+            label4 = new Label();
             label3 = new Label();
             panel4 = new Panel();
             label5 = new Label();
             menuStrip1.SuspendLayout();
             panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -136,30 +137,25 @@
             // 
             // правкаToolStripMenuItem
             // 
-            правкаToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { вырезатьToolStripMenuItem, копироватьToolStripMenuItem, очиститьToolStripMenuItem });
+            правкаToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { очиститьToolStripMenuItem, историяСессийToolStripMenuItem });
             правкаToolStripMenuItem.Image = (Image)resources.GetObject("правкаToolStripMenuItem.Image");
             правкаToolStripMenuItem.Name = "правкаToolStripMenuItem";
             правкаToolStripMenuItem.Size = new Size(94, 24);
             правкаToolStripMenuItem.Text = "Правка";
             // 
-            // вырезатьToolStripMenuItem
-            // 
-            вырезатьToolStripMenuItem.Name = "вырезатьToolStripMenuItem";
-            вырезатьToolStripMenuItem.Size = new Size(176, 26);
-            вырезатьToolStripMenuItem.Text = "Вырезать";
-            // 
-            // копироватьToolStripMenuItem
-            // 
-            копироватьToolStripMenuItem.Name = "копироватьToolStripMenuItem";
-            копироватьToolStripMenuItem.Size = new Size(176, 26);
-            копироватьToolStripMenuItem.Text = "Копировать";
-            // 
             // очиститьToolStripMenuItem
             // 
             очиститьToolStripMenuItem.Name = "очиститьToolStripMenuItem";
-            очиститьToolStripMenuItem.Size = new Size(176, 26);
+            очиститьToolStripMenuItem.Size = new Size(202, 26);
             очиститьToolStripMenuItem.Text = "Очистить";
             очиститьToolStripMenuItem.Click += очиститьToolStripMenuItem_Click;
+            // 
+            // историяСессийToolStripMenuItem
+            // 
+            историяСессийToolStripMenuItem.Name = "историяСессийToolStripMenuItem";
+            историяСессийToolStripMenuItem.Size = new Size(202, 26);
+            историяСессийToolStripMenuItem.Text = "История сессий";
+            историяСессийToolStripMenuItem.Click += историяСессийToolStripMenuItem_Click;
             // 
             // справкаToolStripMenuItem
             // 
@@ -193,11 +189,11 @@
             // 
             // panel1
             // 
+            panel1.Controls.Add(dataGridView1);
             panel1.Controls.Add(textBox4);
             panel1.Controls.Add(button5);
             panel1.Controls.Add(textBox5);
             panel1.Controls.Add(panel2);
-            panel1.Controls.Add(button3);
             panel1.Controls.Add(textBox3);
             panel1.Controls.Add(button2);
             panel1.Controls.Add(textBox2);
@@ -208,10 +204,20 @@
             panel1.Size = new Size(1323, 138);
             panel1.TabIndex = 1;
             // 
+            // dataGridView1
+            // 
+            dataGridView1.BackgroundColor = SystemColors.ButtonFace;
+            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridView1.Location = new Point(702, 14);
+            dataGridView1.Name = "dataGridView1";
+            dataGridView1.RowHeadersWidth = 51;
+            dataGridView1.Size = new Size(229, 108);
+            dataGridView1.TabIndex = 12;
+            // 
             // textBox4
             // 
             textBox4.Font = new Font("Times New Roman", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            textBox4.Location = new Point(673, 17);
+            textBox4.Location = new Point(571, 17);
             textBox4.Multiline = true;
             textBox4.Name = "textBox4";
             textBox4.Size = new Size(105, 32);
@@ -226,7 +232,7 @@
             button5.FlatAppearance.MouseOverBackColor = Color.WhiteSmoke;
             button5.FlatStyle = FlatStyle.Flat;
             button5.ForeColor = SystemColors.ActiveCaptionText;
-            button5.Location = new Point(544, 55);
+            button5.Location = new Point(442, 55);
             button5.Margin = new Padding(0, 3, 3, 3);
             button5.Name = "button5";
             button5.Size = new Size(234, 67);
@@ -238,7 +244,7 @@
             // textBox5
             // 
             textBox5.Font = new Font("Times New Roman", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            textBox5.Location = new Point(544, 17);
+            textBox5.Location = new Point(442, 17);
             textBox5.Multiline = true;
             textBox5.Name = "textBox5";
             textBox5.Size = new Size(105, 32);
@@ -291,28 +297,10 @@
             label1.TabIndex = 7;
             label1.Text = "Выберите алгоритм:";
             // 
-            // button3
-            // 
-            button3.BackColor = SystemColors.ScrollBar;
-            button3.FlatAppearance.BorderColor = Color.White;
-            button3.FlatAppearance.BorderSize = 0;
-            button3.FlatAppearance.MouseDownBackColor = Color.Gainsboro;
-            button3.FlatAppearance.MouseOverBackColor = Color.WhiteSmoke;
-            button3.FlatStyle = FlatStyle.Flat;
-            button3.ForeColor = SystemColors.ActiveCaptionText;
-            button3.Location = new Point(807, 15);
-            button3.Margin = new Padding(0, 3, 3, 3);
-            button3.Name = "button3";
-            button3.Size = new Size(110, 110);
-            button3.TabIndex = 6;
-            button3.Text = "Нарисовать граф";
-            button3.UseVisualStyleBackColor = false;
-            button3.Click += button3_Click;
-            // 
             // textBox3
             // 
             textBox3.Font = new Font("Times New Roman", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            textBox3.Location = new Point(394, 20);
+            textBox3.Location = new Point(320, 17);
             textBox3.Multiline = true;
             textBox3.Name = "textBox3";
             textBox3.Size = new Size(105, 32);
@@ -327,7 +315,7 @@
             button2.FlatAppearance.MouseOverBackColor = Color.WhiteSmoke;
             button2.FlatStyle = FlatStyle.Flat;
             button2.ForeColor = SystemColors.ActiveCaptionText;
-            button2.Location = new Point(265, 58);
+            button2.Location = new Point(191, 55);
             button2.Margin = new Padding(0, 3, 3, 3);
             button2.Name = "button2";
             button2.Size = new Size(234, 67);
@@ -339,7 +327,7 @@
             // textBox2
             // 
             textBox2.Font = new Font("Times New Roman", 13.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            textBox2.Location = new Point(265, 20);
+            textBox2.Location = new Point(191, 17);
             textBox2.Multiline = true;
             textBox2.Name = "textBox2";
             textBox2.Size = new Size(105, 32);
@@ -357,7 +345,7 @@
             button1.Location = new Point(12, 58);
             button1.Margin = new Padding(0, 3, 3, 3);
             button1.Name = "button1";
-            button1.Size = new Size(191, 67);
+            button1.Size = new Size(154, 67);
             button1.TabIndex = 2;
             button1.Text = "Задать количество вершин";
             button1.UseVisualStyleBackColor = false;
@@ -369,7 +357,7 @@
             textBox1.Location = new Point(12, 20);
             textBox1.Multiline = true;
             textBox1.Name = "textBox1";
-            textBox1.Size = new Size(191, 32);
+            textBox1.Size = new Size(154, 32);
             textBox1.TabIndex = 2;
             // 
             // splitContainer1
@@ -396,6 +384,9 @@
             pictureBox1.Size = new Size(664, 406);
             pictureBox1.TabIndex = 0;
             pictureBox1.TabStop = false;
+            pictureBox1.MouseDown += pictureBox1_MouseDown;
+            pictureBox1.MouseMove += pictureBox1_MouseMove;
+            pictureBox1.MouseUp += pictureBox1_MouseUp;
             // 
             // pictureBox2
             // 
@@ -427,11 +418,23 @@
             // 
             // panel3
             // 
+            panel3.Controls.Add(label4);
             panel3.Controls.Add(label3);
             panel3.Location = new Point(12, 606);
             panel3.Name = "panel3";
             panel3.Size = new Size(637, 101);
             panel3.TabIndex = 5;
+            // 
+            // label4
+            // 
+            label4.Anchor = AnchorStyles.None;
+            label4.AutoSize = true;
+            label4.Font = new Font("Segoe UI", 12F, FontStyle.Italic | FontStyle.Underline, GraphicsUnit.Point, 204);
+            label4.Location = new Point(13, 43);
+            label4.Name = "label4";
+            label4.Size = new Size(345, 28);
+            label4.TabIndex = 7;
+            label4.Text = "Сложность алгоритма по времени:";
             // 
             // label3
             // 
@@ -440,16 +443,16 @@
             label3.Font = new Font("Segoe UI", 12F, FontStyle.Italic | FontStyle.Underline, GraphicsUnit.Point, 204);
             label3.Location = new Point(13, 3);
             label3.Name = "label3";
-            label3.Size = new Size(345, 28);
+            label3.Size = new Size(299, 28);
             label3.TabIndex = 6;
-            label3.Text = "Сложность алгоритма по времени:";
+            label3.Text = "Время выполнения программы:";
             // 
             // panel4
             // 
             panel4.Controls.Add(label5);
             panel4.Location = new Point(682, 606);
             panel4.Name = "panel4";
-            panel4.Size = new Size(513, 101);
+            panel4.Size = new Size(638, 101);
             panel4.TabIndex = 7;
             // 
             // label5
@@ -481,10 +484,13 @@
             Name = "Form1";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Алгоритмы на графах";
+            FormClosing += Form1_FormClosing;
+            Load += Form1_Load;
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             panel2.ResumeLayout(false);
             panel2.PerformLayout();
             splitContainer1.Panel1.ResumeLayout(false);
@@ -512,14 +518,11 @@
         private ToolStripMenuItem сохранитьКакToolStripMenuItem;
         private ToolStripMenuItem открытьToolStripMenuItem;
         private ToolStripMenuItem выходToolStripMenuItem1;
-        private ToolStripMenuItem вырезатьToolStripMenuItem;
-        private ToolStripMenuItem копироватьToolStripMenuItem;
         private ToolStripMenuItem просмотрСправкиToolStripMenuItem;
         private ToolStripMenuItem техническаяПоддержкаToolStripMenuItem;
         private Panel panel1;
         private Button button1;
         private TextBox textBox1;
-        private Button button3;
         private TextBox textBox3;
         private Button button2;
         private TextBox textBox2;
@@ -542,5 +545,8 @@
         private ToolStripMenuItem очиститьToolStripMenuItem;
         private ToolStripMenuItem файлToolStripMenuItem;
         private ToolStripMenuItem изображениеToolStripMenuItem;
+        private Label label4;
+        private DataGridView dataGridView1;
+        private ToolStripMenuItem историяСессийToolStripMenuItem;
     }
 }

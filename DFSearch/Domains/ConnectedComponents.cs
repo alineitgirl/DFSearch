@@ -64,7 +64,15 @@ namespace DFSearch.Domains
                 }
             }
         }
+        public string GetAlgorithmConplexity(DataGridView dataGridView)
+        {
+            if (dataGridView.Rows.Count == 0 || dataGridView.Rows.Cast<DataGridViewRow>().All(row => row.IsNewRow))
+            {
+                return (Graph.Edges.Count + Graph.Vertices.Count).ToString();
 
+            }
+            return ((int)Math.Pow(Graph.Edges.Count, 2)).ToString();
+        }
         public override string GetTimeComplexity()
         {
             Stopwatch stopwatch = new Stopwatch();

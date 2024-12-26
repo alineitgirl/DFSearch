@@ -1,4 +1,5 @@
 using DFSearch.Domains;
+using DocumentFormat.OpenXml.Drawing;
 using System.Windows.Forms;
 
 namespace DFSearch
@@ -10,9 +11,15 @@ namespace DFSearch
         GraphConnectivity _connectivity;
         CycleDetection _cycleDetection;
         ConnectedComponents _connectedComponents;
+        SessionHistory sessionHistory = new SessionHistory();
+
+        private System.Drawing.Point _graphPosition = new System.Drawing.Point(50, 50); 
+        private bool _isDragging = false;
+        private System.Drawing.Point _lastMousePos;
         public Form1()
         {
             InitializeComponent();
+            sessionHistory.LoadSessionHistory();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -20,8 +27,29 @@ namespace DFSearch
             if (textBox1.Text == "")
             {
                 MessageBox.Show("У графа должно быть больше одной вершины!");
+                textBox1.Clear();
             }
-            textBox1.Clear();
+            if (int.TryParse(textBox1.Text, out int vertexCount) && vertexCount > 0)
+            {
+
+                graph = new Graph();
+
+
+                for (int i = 0; i < vertexCount; i++)
+                {
+                    graph.AddVertex(i);
+                }
+
+
+                graph.DrawGraph(pictureBox1, Color.DeepSkyBlue, Color.LightGreen);
+
+
+                MessageBox.Show($"Количество вершин задано: {vertexCount}", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                MessageBox.Show("Введите корректное количество вершин!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -31,7 +59,7 @@ namespace DFSearch
                 graph.AddVertex(int.Parse(textBox2.Text));
                 graph.AddVertex(int.Parse(textBox3.Text));
                 graph.AddEdge(int.Parse(textBox2.Text), int.Parse(textBox3.Text));
-                RedrawGraph(pictureBox1);
+                graph.DrawGraph(pictureBox1, Color.DeepSkyBlue, Color.LightGreen);
             }
             else
             {
@@ -50,7 +78,7 @@ namespace DFSearch
                 {
                     graph.RemoveEdge(int.Parse(textBox4.Text), int.Parse(textBox5.Text));
                     graph.RemoveEdge(int.Parse(textBox5.Text), int.Parse(textBox4.Text));
-                    RedrawGraph(pictureBox1);
+                    graph.DrawGraph(pictureBox1, Color.DeepSkyBlue, Color.LightGreen);
                 }
                 else
                 {
@@ -67,69 +95,14 @@ namespace DFSearch
 
         private void button3_Click(object sender, EventArgs e)
         {
-            RedrawGraph(pictureBox1);
-        }
-        private void RedrawGraph(PictureBox pictureBox)
-        {
-            // Создаем объект Graphics для рисования в PictureBox
-            Bitmap bitmap = new Bitmap(pictureBox1.Width, pictureBox1.Height);
-            Graphics g = Graphics.FromImage(bitmap);
-
-            // Очищаем PictureBox перед рисованием
-            g.Clear(Color.White);
-
-            Pen edgePen = new Pen(Color.SkyBlue, 2); // Рёбра - голубой цвет
-            Brush vertexBrush = new SolidBrush(Color.LightGray); // Вершины - светло-серый цвет
-
-            // Вычисление координат для вершин
-            int radius = 100;  // Радиус круга, по которому будут расположены вершины
-            int centerX = pictureBox.Width / 2;
-            int centerY = pictureBox.Height / 2;
-
-            // Рисуем рёбра
-            foreach (var edge in graph.Edges)
+            if (graph.Vertices.Count == 0 && graph.Edges.Count == 0)
             {
-                // Расчет координат вершин
-                var vertexFrom = CalculateVertexPosition(edge.From, pictureBox);
-                var vertexTo = CalculateVertexPosition(edge.To, pictureBox);
-                g.DrawLine(edgePen, vertexFrom.X, vertexFrom.Y, vertexTo.X, vertexTo.Y);
+                MessageBox.Show($"Ошибка: Граф не загружен в систему!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-
-            // Рисуем вершины
-            foreach (var vertex in graph.Vertices)
+            else
             {
-                // Расчет координат для каждой вершины
-                var position = CalculateVertexPosition(vertex, pictureBox);
-                g.FillEllipse(vertexBrush, position.X - 15, position.Y - 15, 30, 30);
-                g.DrawEllipse(Pens.Gray, position.X - 15, position.Y - 15, 30, 30); // Обводка серым цветом
-                g.DrawString(vertex.Id.ToString(), this.Font, Brushes.Black, position.X - 5, position.Y - 5);
+                graph.DrawGraph(pictureBox1, Color.DeepSkyBlue, Color.LightGreen);
             }
-
-            // Устанавливаем изображение в PictureBox
-            pictureBox.Image = bitmap;
-        }
-
-        // Функция для вычисления координат вершины в зависимости от её позиции
-        private Point CalculateVertexPosition(Vertex vertex, PictureBox pictureBox)
-        {
-            // Количество вершин
-            int totalVertices = graph.Vertices.Count;
-
-            // Вычисление угла для текущей вершины
-            double angle = 2 * Math.PI * graph.Vertices.IndexOf(vertex) / totalVertices;
-
-            // Центр PictureBox
-            int centerX = pictureBox.Width / 2;
-            int centerY = pictureBox.Height / 2;
-
-            // Радиус окружности, по которой будут размещены вершины
-            int radius = 150;
-
-            // Вычисление координат вершины
-            int x = (int)(centerX + radius * Math.Cos(angle));
-            int y = (int)(centerY + radius * Math.Sin(angle));
-
-            return new Point(x, y);
         }
 
         private void button4_Click(object sender, EventArgs e)
@@ -152,21 +125,24 @@ namespace DFSearch
                         _dfs._dfsOrder.Clear();
                         _dfs.Execute(graph.Vertices[(int)numericUpDown1.Value - 1]);
                         label3.Text += _dfs.GetTimeComplexity(graph.Vertices[(int)numericUpDown1.Value - 1]) + "мс";
+                        label4.Text += _dfs.GetAlgorithmConplexity(dataGridView1);
                         _dfs.Execute();
-                        graph.RedrawGraph(pictureBox2);
+                        graph.DrawGraph(pictureBox2, Color.Aquamarine, Color.Azure);
                         label5.Text += $"{_dfs.GetTraversalOrder()}";
                         break;
                     case "Определение связности графа":
                         _connectivity = new GraphConnectivity(graph);
                         _connectivity.Execute(graph.Vertices[(int)numericUpDown1.Value - 1]);
-                        graph.RedrawGraph(pictureBox2);
+                        graph.DrawGraph(pictureBox2, Color.Aquamarine, Color.Azure);
                         label3.Text += _connectivity.GetTimeComplexity(graph.Vertices[(int)numericUpDown1.Value - 1]) + "мс";
+                        label4.Text += _connectivity.GetAlgorithmConplexity(dataGridView1);
                         label5.Text = _connectivity.IsConnected ? "Данный граф связный." : "Данный граф НЕсвязный.";
                         break;
                     case "Поиск циклов":
                         _cycleDetection = new CycleDetection(graph);
                         _cycleDetection.Execute(graph.Vertices[(int)numericUpDown1.Value - 1]);
                         label3.Text += _cycleDetection.GetTimeComplexity(graph.Vertices[(int)numericUpDown1.Value - 1]) + "мс";
+                        label4.Text += _cycleDetection.GetAlgorithmConplexity(dataGridView1);
                         _cycleDetection.Execute();
                         _cycleDetection.RedrawGraph(pictureBox2);
                         label5.Text = _cycleDetection._hasCycle ? $"Данный граф содержит цикл: {_cycleDetection.GetCyclePath()}." : "Данный граф НЕ содержит циклов.";
@@ -175,9 +151,13 @@ namespace DFSearch
                         _connectedComponents = new ConnectedComponents(graph);
                         _connectedComponents.Execute(graph.Vertices[(int)numericUpDown1.Value - 1]);
                         label3.Text += _connectedComponents.GetTimeComplexity(graph.Vertices[(int)numericUpDown1.Value - 1]) + "мс";
+                        label4.Text += _connectedComponents.GetAlgorithmConplexity(dataGridView1);
                         _connectedComponents.Execute();
                         _connectedComponents.RedrawGraph(pictureBox2);
                         label5.Text += _connectedComponents.GetComponentsAsString();
+                        break;
+                    default:
+                        MessageBox.Show("Данный алгоритм нельзя выбрать!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         break;
                 }
             }
@@ -194,7 +174,9 @@ namespace DFSearch
             textBox4.Clear();
             textBox5.Clear();
             numericUpDown1.Value = 1;
-            label3.Text = "Сложность алгоритма по времени: ";
+            dataGridView1.Rows.Clear();
+            label3.Text = "Время выполнения программы: ";
+            label4.Text = "Сложность алгоритма по времени: ";
             label5.Text = "Порядок обхода вершин: ";
             graph = new Graph();
         }
@@ -224,7 +206,7 @@ namespace DFSearch
 
                     string fileName = saveFileDialog.FileName;
 
-                    string selectedFormat = Path.GetExtension(fileName)?.TrimStart('.').ToLower();
+                    string selectedFormat = System.IO.Path.GetExtension(fileName)?.TrimStart('.').ToLower();
 
                     if (selectedFormat != "txt" && selectedFormat != "pdf" && selectedFormat != "docx")
                     {
@@ -268,12 +250,12 @@ namespace DFSearch
                     if (dialog.ShowDialog() == DialogResult.OK)
                     {
 
-                        string format = Path.GetExtension(dialog.FileName).TrimStart('.').ToLower();
+                        string format = System.IO.Path.GetExtension(dialog.FileName).TrimStart('.').ToLower();
 
                         Bitmap graphImage = new Bitmap(pictureBox2.Width, pictureBox2.Height);
                         using (Graphics g = Graphics.FromImage(graphImage))
                         {
-                            pictureBox2.DrawToBitmap(graphImage, new Rectangle(0, 0, graphImage.Width, graphImage.Height));
+                            pictureBox2.DrawToBitmap(graphImage, new System.Drawing.Rectangle(0, 0, graphImage.Width, graphImage.Height));
                         }
 
 
@@ -305,10 +287,10 @@ namespace DFSearch
 
                         graph = new Graph();
                         FileManager fileManager = new FileManager();
-                        fileManager.LoadGraphFromFile(filePath, graph);
+                        fileManager.LoadGraphFromFile(filePath, graph, dataGridView1);
 
 
-                        graph.RedrawGraph(pictureBox1);
+                        graph.DrawGraph(pictureBox1, Color.Aquamarine, Color.Azure);
 
                         MessageBox.Show("Граф успешно загружен!", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
@@ -330,6 +312,79 @@ namespace DFSearch
         {
             var formSupport = new FormSupport();
             formSupport.ShowDialog();
+        }
+
+        private void вырезатьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CutTextFromControls(this.Controls);
+        }
+        private void CutTextFromControls(Control.ControlCollection controls)
+        {
+            foreach (Control control in controls)
+            {
+                if (control is TextBox textBox && textBox.SelectedText.Length > 0)
+                {
+                    Clipboard.SetText(textBox.SelectedText);
+                    textBox.SelectedText = string.Empty; 
+                    return; 
+                }
+                else if (control is RichTextBox richTextBox && richTextBox.SelectedText.Length > 0)
+                {
+                    Clipboard.SetText(richTextBox.SelectedText); 
+                    richTextBox.SelectedText = string.Empty; 
+                    return;
+                }
+                
+                if (control.HasChildren)
+                {
+                    CutTextFromControls(control.Controls);
+                }
+            }
+        }
+
+        private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (_isDragging)
+            {
+                int dx = e.X - _lastMousePos.X;
+                int dy = e.Y - _lastMousePos.Y;
+                _graphPosition.X += dx;
+                _graphPosition.Y += dy;
+                _lastMousePos = e.Location;
+
+                graph.DrawGraph(pictureBox1, Color.DeepSkyBlue, Color.LightGreen);
+            }
+        }
+
+        private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                _isDragging = true;
+                _lastMousePos = e.Location;
+            }
+        }
+
+        private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
+        {
+            _isDragging = false;
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            sessionHistory.StartNewSession("User1");
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            sessionHistory.EndCurrentSession();
+            sessionHistory.SaveSessionHistory();
+        }
+
+        private void историяСессийToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var historyForm = new HistoryForm(sessionHistory.sessionHistory); 
+            historyForm.ShowDialog();
         }
     }
 }
