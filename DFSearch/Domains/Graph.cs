@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace DFSearch.Domains
 {
-    public class Graph
+    public class Graph : IDrawGraph
     {
         public List<Vertex> Vertices { get; } = new();
         public List<Edge> Edges { get; } = new();
@@ -35,7 +35,7 @@ namespace DFSearch.Domains
             {
                 Vertices.Remove(vertex);
                 Edges.RemoveAll(e => e.From == vertex || e.To == vertex);
-            } 
+            }
         }
 
         public void RemoveEdge(int fromId, int toId)
@@ -49,17 +49,17 @@ namespace DFSearch.Domains
                 v.IsVisited = false;
             }
         }
-
-        public void RedrawGraph(PictureBox pictureBox)
+        public void DrawGraph(PictureBox pictureBox, Color colorEdge, Color colorVertices)
         {
+
             Bitmap bitmap = new Bitmap(pictureBox.Width, pictureBox.Height);
             Graphics g = Graphics.FromImage(bitmap);
 
             g.Clear(Color.White);
 
             Pen edgePen = new Pen(Color.Gray, 2);
-            Brush visitedBrush = new SolidBrush(Color.LightBlue);
-            Brush unvisitedBrush = new SolidBrush(Color.LightGray);
+            Brush visitedBrush = new SolidBrush(colorEdge);
+            Brush unvisitedBrush = new SolidBrush(colorVertices);
 
             // Центр PictureBox
             int centerX = pictureBox.Width / 2;
@@ -97,6 +97,5 @@ namespace DFSearch.Domains
 
             pictureBox.Image = bitmap;
         }
-
     }
 }

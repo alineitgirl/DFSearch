@@ -88,7 +88,15 @@ namespace DFSearch.Domains
             _cycleStack.Pop();  // Убираем вершину из стека, если она не является частью цикла
             return false;
         }
+        public string GetAlgorithmConplexity(DataGridView dataGridView)
+        {
+            if (dataGridView.Rows.Count == 0 || dataGridView.Rows.Cast<DataGridViewRow>().All(row => row.IsNewRow))
+            {
+                return (Graph.Edges.Count + Graph.Vertices.Count).ToString();
 
+            }
+            return ((int)Math.Pow(Graph.Edges.Count, 2)).ToString();
+        }
         public string GetCyclePath()
         {
             if (!_hasCycle)

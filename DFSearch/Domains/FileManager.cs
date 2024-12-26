@@ -8,9 +8,9 @@ using PdfSharp.Pdf.IO;
 
 namespace DFSearch.Domains
 {
-    public class FileManager
+    public class FileManager : IFileControl
     {
-        public void SaveToFile(string fileName, string format, List<string> algorithmResults, string dateTime)
+        public void SaveToFile(string fileName, string format, List<string> algorithmResults, string dateTime) 
         {
             if (File.Exists(fileName))
             {
@@ -222,53 +222,96 @@ namespace DFSearch.Domains
             }
         }
 
-        public void LoadGraphFromFile(string filePath, Graph graph)
+        public void LoadGraphFromFile(string filePath, Graph graph, DataGridView dataGridView)
         {
             try
             {
+                // Читаем все строки из файла
                 var lines = File.ReadAllLines(filePath);
 
+                // Очищаем граф перед загрузкой
                 graph.Vertices.Clear();
                 graph.Edges.Clear();
 
-                bool isVerticesSection = true;
+                int vertexCount = lines.Length; // Количество строк определяет количество вершин
 
-                foreach (var line in lines)
+                // Создаём матрицу смежности
+                int[,] adjacencyMatrix = new int[vertexCount, vertexCount];
+
+                // Добавляем вершины в граф
+                for (int i = 0; i < vertexCount; i++)
                 {
-                    if (string.IsNullOrWhiteSpace(line)) continue;
+                    graph.AddVertex(i);
+                }
 
-                    if (line.StartsWith("#"))
+                // Заполняем граф рёбрами на основе матрицы смежности
+                for (int i = 0; i < vertexCount; i++)
+                {
+                    var row = lines[i].Split(new[] { ' ', '\t', ',' }, StringSplitOptions.RemoveEmptyEntries)
+                                      .Select(int.Parse)
+                                      .ToArray();
+
+                    if (row.Length != vertexCount)
                     {
-                        isVerticesSection = line.Trim() == "#Vertices";
-                        continue;
+                        throw new Exception("Матрица смежности некорректна: количество элементов в строке не соответствует количеству вершин.");
                     }
 
-                    if (isVerticesSection)
+                    for (int j = 0; j < vertexCount; j++)
                     {
-                        var vertexIds = line.Split(',').Select(int.Parse);
-                        foreach (var id in vertexIds)
+                        adjacencyMatrix[i, j] = row[j]; // Заполняем матрицу смежности
+
+                        if (row[j] == 1) // Если существует ребро
                         {
-                            graph.AddVertex(id);
+                            graph.AddEdge(i, j);
                         }
                     }
-                    else
-                    {
-                        var edgeData = line.Split(',').Select(int.Parse).ToArray();
-                        int fromId = edgeData[0];
-                        int toId = edgeData[1];
-
-                        Vertex from = graph.Vertices.First(v => v.Id == fromId);
-                        Vertex to = graph.Vertices.First(v => v.Id == toId);
-
-                        graph.AddEdge(from.Id, to.Id);
-                    }
                 }
+
+                // Загружаем матрицу смежности в DataGridView
+                LoadMatrixToDataGridView(dataGridView, adjacencyMatrix);
             }
             catch (Exception ex)
             {
                 throw new Exception($"Ошибка при загрузке графа из файла: {ex.Message}");
             }
         }
+
+        public void LoadMatrixToDataGridView(DataGridView dataGridView, int[,] matrix)
+        {
+            // Очистка DataGridView
+            dataGridView.Columns.Clear();
+            dataGridView.Rows.Clear();
+
+            int size = matrix.GetLength(0);
+
+            // Добавляем колонки в DataGridView
+            for (int i = 0; i < size; i++)
+            {
+                dataGridView.Columns.Add($"Col{i}", $"V{i + 1}");
+            }
+
+            // Добавляем строки в DataGridView
+            for (int i = 0; i < size; i++)
+            {
+                var row = new DataGridViewRow();
+                for (int j = 0; j < size; j++)
+                {
+                    row.Cells.Add(new DataGridViewTextBoxCell { Value = matrix[i, j] });
+                }
+                dataGridView.Rows.Add(row);
+            }
+
+            // Устанавливаем названия строк (индексы вершин)
+            for (int i = 0; i < size; i++)
+            {
+                dataGridView.Rows[i].HeaderCell.Value = $"V{i + 1}";
+            }
+
+            // Настройка стилей
+            dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+            dataGridView.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
+        }
+
 
     }
 }
